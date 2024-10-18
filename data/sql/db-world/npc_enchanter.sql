@@ -4,8 +4,8 @@
 SET
 @Entry 		:= 601015,
 @Model 		:= 9353, -- Undead Necromancer
-@Name 		:= "Beauregard Boneglitter",
-@Title 		:= "Enchantments",
+@Name 		:= "博瑞德",
+@Title  	:= "附魔师",
 @Icon 		:= "Speak",
 @GossipMenu := 0,
 @MinLevel 	:= 80,
@@ -35,4 +35,4 @@ INSERT INTO `creature_equip_template` VALUES (@Entry, 1, 11343, 0, 0, 18019); --
 
 -- NPC TEXT
 DELETE FROM `npc_text` WHERE `ID`=@Entry;
-INSERT INTO `npc_text` (`ID`, `text0_0`) VALUES (@Entry, 'Good day $N. Beauregard Boneglitter at your service. I offer a vast array of gear enchantments for the aspiring adventurer.');
+INSERT INTO `npc_text` (`ID`, `text0_0`) VALUES (@Entry, '美好的一天 $N. 博瑞德·博尼格利特为您服务. 我为有抱负的冒险家提供大量装备附魔.');
