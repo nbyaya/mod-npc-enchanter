@@ -1127,17 +1127,17 @@ public:
         // Random enchantment notification
         if (roll > 0 && roll < 33)
         {
-            ChatHandler(player->GetSession()).SendNotification("|cff00ff00博瑞德拿着|cffDA70D6%s |cff00ff00在空中发出奇怪的咒语!", item->GetTemplate()->Name1.c_str());
+            ChatHandler(player->GetSession()).SendNotification("|cff00ff00博瑞德的枯骨手指触碰 |cffDA70D6%s|cff00ff00 时闪耀着能量！", item->GetTemplate()->Name1.c_str());
             // creature->HandleEmoteCommand(EMOTE_ONESHOT_CHEER);
         }
         else if (roll > 33 && roll < 75)
         {
-            ChatHandler(player->GetSession()).SendNotification("|cff00ff00博瑞德拿着|cffDA70D6%s |cff00ff00在空中发出奇怪的咒语!", item->GetTemplate()->Name1.c_str());
+            ChatHandler(player->GetSession()).SendNotification("|cff00ff00博瑞德举起 |cffDA70D6%s|cff00ff00 高高在空中，念起了奇怪的咒语！", item->GetTemplate()->Name1.c_str());
             // creature->HandleEmoteCommand(EMOTE_ONESHOT_CHEER);
         }
         else
         {
-            ChatHandler(player->GetSession()).SendNotification("|cff00ff00博瑞德在|cffDA70D6%s|cff00ff00上全神贯注挥动着魔杖!", item->GetTemplate()->Name1.c_str());
+            ChatHandler(player->GetSession()).SendNotification("|cff00ff00博瑞德深入集中注意力，用他的魔杖在 |cffDA70D6%s|cff00ff00 上挥舞！", item->GetTemplate()->Name1.c_str());
             // creature->HandleEmoteCommand(EMOTE_ONESHOT_WAVE);
         }
         creature->CastSpell(player, 12512); // enchantment visual
