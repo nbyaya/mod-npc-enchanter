@@ -1101,48 +1101,71 @@ public:
     }
 
     void Enchant(Player* player, Creature* creature, Item* item, uint32 enchantid)
+{
+    if (!item)
     {
-        if (!item)
-        {
-            creature->HandleEmoteCommand(EMOTE_ONESHOT_LAUGH);
-            creature->Whisper("请装备你想要附魔的物品!", LANG_UNIVERSAL, player);
-            player->PlayerTalkClass->SendCloseGossip();
-            return;
-        }
-
-        if (!enchantid)
-        {
-            ChatHandler(player->GetSession()).SendNotification("代码出了问题。我们已将此问题记录在案，并将对开发人员进行调查，给您带来的不便深表歉意.");
-            player->PlayerTalkClass->SendCloseGossip();
-            creature->HandleEmoteCommand(EMOTE_ONESHOT_LAUGH);
-            return;
-        }
-
-        // Roll the dice
-        roll = urand(1, 100);
-
-        item->ClearEnchantment(PERM_ENCHANTMENT_SLOT);
-        item->SetEnchantment(PERM_ENCHANTMENT_SLOT, enchantid, 0, 0);
-
-        // Random enchantment notification
-        if (roll > 0 && roll < 33)
-        {
-            ChatHandler(player->GetSession()).SendNotification("|cff00ff00博瑞德的枯骨手指触碰 |cffDA70D6%s|cff00ff00 时闪耀着能量！", item->GetTemplate()->Name1.c_str());
-            // creature->HandleEmoteCommand(EMOTE_ONESHOT_CHEER);
-        }
-        else if (roll > 33 && roll < 75)
-        {
-            ChatHandler(player->GetSession()).SendNotification("|cff00ff00博瑞德举起 |cffDA70D6%s|cff00ff00 高高在空中，念起了奇怪的咒语！", item->GetTemplate()->Name1.c_str());
-            // creature->HandleEmoteCommand(EMOTE_ONESHOT_CHEER);
-        }
-        else
-        {
-            ChatHandler(player->GetSession()).SendNotification("|cff00ff00博瑞德深入集中注意力，用他的魔杖在 |cffDA70D6%s|cff00ff00 上挥舞！", item->GetTemplate()->Name1.c_str());
-            // creature->HandleEmoteCommand(EMOTE_ONESHOT_WAVE);
-        }
-        creature->CastSpell(player, 12512); // enchantment visual
+        creature->HandleEmoteCommand(EMOTE_ONESHOT_LAUGH);
+        creature->Whisper("请装备你想要附魔的物品!", LANG_UNIVERSAL, player);
         player->PlayerTalkClass->SendCloseGossip();
+        return;
     }
+
+    if (!enchantid)
+    {
+        ChatHandler(player->GetSession()).SendNotification("代码出了问题。我们已将此问题记录在案，并将对开发人员进行调查，给您带来的不便深表歉意.");
+        player->PlayerTalkClass->SendCloseGossip();
+        creature->HandleEmoteCommand(EMOTE_ONESHOT_LAUGH);
+        return;
+    }
+
+    // 获取物品模板
+    ItemTemplate const* pProto = sObjectMgr->GetItemTemplate(item->GetTemplate()->ItemId);
+    if (!pProto)
+    {
+        ChatHandler(player->GetSession()).SendNotification("无法获取物品模板!");
+        return;
+    }
+
+    // 获取物品本地化名称
+    std::string itemName = pProto->Name1;  // 默认名称
+
+    // 获取物品的本地化名称，如果物品有本地化数据
+    if (ItemLocale const* il = sObjectMgr->GetItemLocale(item->GetTemplate()->ItemId))
+    {
+        // 使用 LOCALE_zhCN 获取中文名称
+        ObjectMgr::GetLocaleString(il->Name, LOCALE_zhCN, itemName);
+    }
+
+    // Roll the dice
+    uint32 roll = urand(1, 100);
+
+    item->ClearEnchantment(PERM_ENCHANTMENT_SLOT);
+    item->SetEnchantment(PERM_ENCHANTMENT_SLOT, enchantid, 0, 0);
+
+    // 随机附魔通知
+    std::string message;
+    if (roll > 0 && roll < 33)
+    {
+        message = "|cff00ff00博瑞德的枯骨手指触碰 |cffDA70D6" + itemName + " |cff00ff00时闪耀着能量！";
+        ChatHandler(player->GetSession()).SendNotification(message.c_str());
+    }
+    else if (roll > 33 && roll < 75)
+    {
+        message = "|cff00ff00博瑞德举起 |cffDA70D6" + itemName + " |cff00ff00高高在空中，念起了奇怪的咒语！";
+        ChatHandler(player->GetSession()).SendNotification(message.c_str());
+    }
+    else
+    {
+        message = "|cff00ff00博瑞德深入集中注意力，用他的魔杖在 |cffDA70D6" + itemName + " |cff00ff00上挥舞！";
+        ChatHandler(player->GetSession()).SendNotification(message.c_str());
+    }
+
+    // 施放附魔特效
+    creature->CastSpell(player, 12512); // enchantment visual
+    player->PlayerTalkClass->SendCloseGossip();
+}
+
+
 
     // Passive Emotes
     struct NPC_PassiveAI : public ScriptedAI
